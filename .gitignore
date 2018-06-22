@@ -1,6 +1,5 @@
 networkadmin.card
-.nyc_output/4a9aaf129b6237f095683dbfd3ae1064.json
-.nyc_output/ee879a53b147863537a19c4c6b506ed1.json
+.nyc_output/*/*
 .vscode/settings.json
 node_modules/*/*
 package-lock.json

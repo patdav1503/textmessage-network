@@ -132,6 +132,31 @@ Feature: Text Message Network
             | 001       |
         Then I should get an error matching /does not have .* access to resource/
 
+    Scenario: Alice can send a message
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPublicMessage", "creator":"org.message.mynetwork.Member#alice@email.com", "messageId":"051", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.Message", "messageId":"051", "creator":"org.message.mynetwork.Member#alice@email.com", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+
+    Scenario: Alice can not send a message Bob owns
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPublicMessage", "creator":"org.message.mynetwork.Member#bob@email.com", "messageId":"051", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
     Scenario: Alice can submit a reply for a message
         When I use the identity alice1
         And I submit the following transaction
@@ -144,5 +169,45 @@ Feature: Text Message Network
             """
             [
             {"$class":"org.message.mynetwork.Reply", "messageId":"051", "creator":"org.message.mynetwork.Member#alice@email.com", "replyTo":"org.message.mynetwork.Message#002", "subject":"Re: Goodbye All!", "value":"Not this time."}
+            ]
+            """
+
+    Scenario: Bob can send a message
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPublicMessage", "creator":"org.message.mynetwork.Member#bob@email.com", "messageId":"051", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.Message", "messageId":"051", "creator":"org.message.mynetwork.Member#bob@email.com", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+
+    Scenario: Bob can not send a message Alice owns
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPublicMessage", "creator":"org.message.mynetwork.Member#alice@email.com", "messageId":"051", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
+    Scenario: Bob can submit a reply for a message
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPublicReply", "parentMessage":"org.message.mynetwork.Message#001", "creator":"org.message.mynetwork.Member#bob@email.com", "replyId":"051", "subject":"Re: Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.Reply", "messageId":"051", "creator":"org.message.mynetwork.Member#bob@email.com", "replyTo":"org.message.mynetwork.Message#001", "subject":"Re: Goodbye All!", "value":"Not this time."}
             ]
             """

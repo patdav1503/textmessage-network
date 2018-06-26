@@ -142,6 +142,81 @@ Feature: Text Message Network (Private message)
             | 001       |
         Then I should get an error matching /does not have .* access to resource/
 
+    Scenario: Alice can submit a message
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPrivateMessage", "creator":"org.message.mynetwork.Member#alice@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "messageId":"003", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.directMessage", "messageId":"003", "creator":"org.message.mynetwork.Member#alice@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+
+    Scenario: Alice can submit a message without creator
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPrivateMessage", "recipient":"org.message.mynetwork.Member#george@email.com", "messageId":"003", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.directMessage", "messageId":"003", "creator":"org.message.mynetwork.Member#alice@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+
+    Scenario: Alice can not submit a message that Bob owns
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPrivateMessage", "creator":"org.message.mynetwork.Member#bob@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "messageId":"003", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
+    Scenario: Alice can not submit a message that has an existing message Id
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPrivateMessage", "creator":"org.message.mynetwork.Member#alice@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "messageId":"001", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should get an error matching /add object with ID .* as the object already exists/
+
+    Scenario: Bob can submit a message
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPrivateMessage", "creator":"org.message.mynetwork.Member#bob@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "messageId":"003", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.directMessage", "messageId":"003", "creator":"org.message.mynetwork.Member#bob@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+
+    Scenario: Bob can not submit a message that Alice owns
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.sendPrivateMessage", "creator":"org.message.mynetwork.Member#alice@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "messageId":"003", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
     Scenario: Alice can submit a reply for her message
         When I use the identity alice1
         And I submit the following transaction

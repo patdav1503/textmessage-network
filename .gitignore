@@ -1,5 +1,6 @@
 networkadmin.card
 .nyc_output/*/*
+.nyc_output/*
 .vscode/settings.json
 node_modules/*/*
 package-lock.json

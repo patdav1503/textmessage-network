@@ -21,6 +21,10 @@ The `sendPrivateMessage` function is called when an `sendPrivateMessage` transac
 
 The `sendPrivateMessage` function is called when an `sendPrivateReply` transaction is submitted. The logic simply checks that the listing for the offer is still for sale, and then adds the offer to the listing, and then updates the offers in the `directReply` asset registry.
 
+To test this Business Network Definition using **Composer CLI**
+
+From the top directory with `package.json`, run `npm install` to install network and required packages into `npm`.  Use `npm test` to run the test using `mocha` and `cucumber` as defined in the `package.json` file.
+
 To test this Business Network Definition in the **Test** tab:
 
 

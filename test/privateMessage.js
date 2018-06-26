@@ -397,7 +397,42 @@ describe('#' + namespace, () => {
         assetRegistry.remove('1').should.be.rejectedWith(/does not have .* access to resource/);
     });
 
-    it('Alice can submit a reply for her assets', async () => {
+    it('Alice can submit a message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
+
+        // Submit the reply.
+        const myReply = factory.newTransaction(namespace, 'sendPrivateMessage');
+        myReply.creator = factory.newRelationship(namespace, participantType, 'alice@email.com');
+        myReply.recipient = factory.newRelationship(namespace, participantType, 'george@email.com');
+        myReply.messageId = '51';
+        myReply.value = 'My first message';
+        myReply.subject = 'First message';
+        await businessNetworkConnection.submitTransaction(myReply);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'directMessage');
+        const asset1 = await assetRegistry.get('51');
+
+        //const assetRegistry2 = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'publicMessage');
+        //const asset2 = await assetRegistry.get('51');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        asset1.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        asset1.value.should.equal('My first message');
+
+        // Validate the events.
+        //events.should.have.lengthOf(1);
+        //const event = events[0];
+        //event.eventId.should.be.a('string');
+        //event.timestamp.should.be.an.instanceOf(Date);
+        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
+        //event.oldValue.should.equal('10');
+        //event.newValue.should.equal('50');
+    });
+
+    it('Alice can submit a reply for her message', async () => {
         // Use the identity for Alice.
         await useIdentity(aliceCardName);
 
@@ -433,6 +468,38 @@ describe('#' + namespace, () => {
         //event.newValue.should.equal('50');
     });
 
+    it('Alice can submit a reply for her message without creator', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
+
+        // Submit the reply.
+        const myReply = factory.newTransaction(namespace, 'sendPrivateReply');
+        myReply.parentMessage = factory.newRelationship(namespace,'directMessage','1');
+        myReply.recipient = factory.newRelationship(namespace, participantType, 'george@email.com');
+        myReply.replyId = '51';
+        myReply.value = 'My first reply';
+        myReply.subject = 'Re: First reply';
+        await businessNetworkConnection.submitTransaction(myReply);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'directReply');
+        const asset1 = await assetRegistry.get('51');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        asset1.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        asset1.value.should.equal('My first reply');
+
+        // Validate the events.
+        //events.should.have.lengthOf(1);
+        //const event = events[0];
+        //event.eventId.should.be.a('string');
+        //event.timestamp.should.be.an.instanceOf(Date);
+        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
+        //event.oldValue.should.equal('10');
+        //event.newValue.should.equal('50');
+    });
+
     it('Alice cannot submit a reply for Bob\'s message', async () => {
         // Use the identity for Alice.
         await useIdentity(aliceCardName);
@@ -448,45 +515,135 @@ describe('#' + namespace, () => {
         businessNetworkConnection.submitTransaction(myReply).should.be.rejectedWith(/collection with ID .* does not exist/);
     });
 
-    /*
-    it('Bob can submit a transaction for his assets', async () => {
-        // Use the identity for Bob.
-        await useIdentity(bobCardName);
+    it('Alice cannot submit a reply for her message with Bob as creator', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
 
         // Submit the transaction.
-        const transaction = factory.newTransaction(namespace, 'SampleTransaction');
-        transaction.asset = factory.newRelationship(namespace, assetType, '2');
-        transaction.newValue = '60';
-        await businessNetworkConnection.submitTransaction(transaction);
+        const myReply = factory.newTransaction(namespace, 'sendPrivateReply');
+        myReply.parentMessage = factory.newRelationship(namespace,'directMessage','1');
+        myReply.creator = factory.newRelationship(namespace, participantType, 'bob@email.com');
+        myReply.recipient = factory.newRelationship(namespace, participantType, 'george@email.com');
+        myReply.replyId = '51';
+        myReply.value = 'My first reply';
+        myReply.subject = 'Re: First reply';
+        businessNetworkConnection.submitTransaction(myReply).should.be.rejectedWith(/does not have .* access to resource/);
+    });
+
+    it('Bob can submit a message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myReply = factory.newTransaction(namespace, 'sendPrivateMessage');
+        myReply.creator = factory.newRelationship(namespace, participantType, 'bob@email.com');
+        myReply.recipient = factory.newRelationship(namespace, participantType, 'george@email.com');
+        myReply.messageId = '51';
+        myReply.value = 'My first message';
+        myReply.subject = 'First message';
+        await businessNetworkConnection.submitTransaction(myReply);
 
         // Get the asset.
-        const assetRegistry = await businessNetworkConnection.getAssetRegistry(assetNS);
-        const asset2 = await assetRegistry.get('2');
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'directMessage');
+        const asset1 = await assetRegistry.get('51');
+
+        //const assetRegistry2 = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'publicMessage');
+        //const asset2 = await assetRegistry.get('51');
 
         // Validate the asset.
-        asset2.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
-        asset2.value.should.equal('60');
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        asset1.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        asset1.value.should.equal('My first message');
 
         // Validate the events.
-        events.should.have.lengthOf(1);
-        const event = events[0];
-        event.eventId.should.be.a('string');
-        event.timestamp.should.be.an.instanceOf(Date);
-        event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#2');
-        event.oldValue.should.equal('20');
-        event.newValue.should.equal('60');
+        //events.should.have.lengthOf(1);
+        //const event = events[0];
+        //event.eventId.should.be.a('string');
+        //event.timestamp.should.be.an.instanceOf(Date);
+        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
+        //event.oldValue.should.equal('10');
+        //event.newValue.should.equal('50');
     });
 
-    it('Bob cannot submit a transaction for Alice\'s assets', async () => {
-        // Use the identity for Bob.
+    it('Bob can submit a reply for his message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myReply = factory.newTransaction(namespace, 'sendPrivateReply');
+        myReply.parentMessage = factory.newRelationship(namespace,'directMessage','1');
+        myReply.creator = factory.newRelationship(namespace, participantType, 'bob@email.com');
+        myReply.recipient = factory.newRelationship(namespace, participantType, 'george@email.com');
+        myReply.replyId = '51';
+        myReply.value = 'My first reply';
+        myReply.subject = 'Re: First reply';
+        await businessNetworkConnection.submitTransaction(myReply);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'directReply');
+        const asset1 = await assetRegistry.get('51');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        asset1.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        asset1.value.should.equal('My first reply');
+
+        // Validate the events.
+        //events.should.have.lengthOf(1);
+        //const event = events[0];
+        //event.eventId.should.be.a('string');
+        //event.timestamp.should.be.an.instanceOf(Date);
+        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
+        //event.oldValue.should.equal('10');
+        //event.newValue.should.equal('50');
+    });
+
+    it('Bob can submit a reply for his message without creator', async () => {
+        // Use the identity for Alice.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myReply = factory.newTransaction(namespace, 'sendPrivateReply');
+        myReply.parentMessage = factory.newRelationship(namespace,'directMessage','1');
+        myReply.recipient = factory.newRelationship(namespace, participantType, 'george@email.com');
+        myReply.replyId = '51';
+        myReply.value = 'My first reply';
+        myReply.subject = 'Re: First reply';
+        await businessNetworkConnection.submitTransaction(myReply);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'directReply');
+        const asset1 = await assetRegistry.get('51');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        asset1.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        asset1.value.should.equal('My first reply');
+
+        // Validate the events.
+        //events.should.have.lengthOf(1);
+        //const event = events[0];
+        //event.eventId.should.be.a('string');
+        //event.timestamp.should.be.an.instanceOf(Date);
+        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
+        //event.oldValue.should.equal('10');
+        //event.newValue.should.equal('50');
+    });
+
+    it('Bob cannot submit a reply for her message with Alice as creator', async () => {
+        // Use the identity for Alice.
         await useIdentity(bobCardName);
 
         // Submit the transaction.
-        const transaction = factory.newTransaction(namespace, 'SampleTransaction');
-        transaction.asset = factory.newRelationship(namespace, assetType, '1');
-        transaction.newValue = '60';
-        businessNetworkConnection.submitTransaction(transaction).should.be.rejectedWith(/does not have .* access to resource/);
+        const myReply = factory.newTransaction(namespace, 'sendPrivateReply');
+        myReply.parentMessage = factory.newRelationship(namespace,'directMessage','1');
+        myReply.creator = factory.newRelationship(namespace, participantType, 'alice@email.com');
+        myReply.recipient = factory.newRelationship(namespace, participantType, 'george@email.com');
+        myReply.replyId = '51';
+        myReply.value = 'My first reply';
+        myReply.subject = 'Re: First reply';
+        businessNetworkConnection.submitTransaction(myReply).should.be.rejectedWith(/does not have .* access to resource/);
     });
-    */
+
 
 });

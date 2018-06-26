@@ -64,7 +64,7 @@ asset directReply extends privateMessage {
 }
 
 transaction sendPublicMessage {
-  --> User creator
+  --> User creator optional
   o String messageId
   o String value
   o String subject
@@ -72,14 +72,14 @@ transaction sendPublicMessage {
 
 transaction sendPublicReply {
   --> publicMessage parentMessage
-  --> User creator
+  --> User creator optional
   o String replyId
   o String value
   o String subject
 }
 
 transaction sendPrivateMessage {
-  --> User creator
+  --> User creator optional
   --> User recipient
   o String messageId
   o String value
@@ -88,7 +88,7 @@ transaction sendPrivateMessage {
 
 transaction sendPrivateReply {
   --> privateMessage parentMessage
-  --> User creator
+  --> User creator optional
   --> User recipient
   o String replyId
   o String value

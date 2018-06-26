@@ -24,7 +24,7 @@ rule Member_R_Member {
 }
  
 rule Admin {
-    description: "Allow the auctioneer full access"
+    description: "Allow the admin full access"
     participant: "org.message.mynetwork.Admin"
     operation: ALL
     resource: "org.message.mynetwork.*"

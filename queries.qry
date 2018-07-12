@@ -1,0 +1,48 @@
+/*
+ * Queries for the textmessage network
+ */
+
+query selectAllPublicMessages {
+    description: "Select all public messages"
+    statement:
+        SELECT org.message.mynetwork.Message
+}
+
+query selectAllPrivateMessages {
+    description: "Select all private messages"
+    statement:
+        SELECT org.message.mynetwork.directMessage
+}
+
+query selectAllPrivateMessagesForRecipient {
+    description: "Select all private messages based on their recipient"
+    statement:
+        SELECT org.message.mynetwork.directMessage
+            WHERE (recipient == _$recipient)
+}
+
+query selectAllPublicReplies {
+    description: "Select all public replies"
+    statement:
+        SELECT org.message.mynetwork.Reply
+}
+
+query selectAllPrivateReplies {
+    description: "Select all private replies"
+    statement:
+        SELECT org.message.mynetwork.directReply
+}
+
+query selectAllPrivateRepliesForRecipient {
+    description: "Select all private replies based on their recipient"
+    statement:
+        SELECT org.message.mynetwork.directReply
+            WHERE (recipient == _$recipient)
+}
+
+query selectAllPrivateRepliesForParent {
+    description: "Select all private replies based on parent message"
+    statement:
+        SELECT org.message.mynetwork.directReply
+            WHERE (replyTo == _$replyTo)
+}

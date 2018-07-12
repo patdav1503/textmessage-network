@@ -95,3 +95,17 @@ transaction sendPrivateReply {
   o String subject
 }
 
+event MessageCreated {
+  --> baseMessage newMessage
+  --> User creator
+  --> User recipient optional
+  o String subject
+}
+
+event ReplyCreated {
+  --> baseMessage newReply
+  --> baseMessage replyTo
+  --> User creator
+  --> User recipient optional
+  o String subject
+}

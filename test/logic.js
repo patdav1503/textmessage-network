@@ -410,13 +410,13 @@ describe('#' + namespace, () => {
         asset1.value.should.equal('My first reply');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
-        //event.oldValue.should.equal('10');
-        //event.newValue.should.equal('50');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Alice can submit a reply for a message without creator', async () => {
@@ -440,13 +440,13 @@ describe('#' + namespace, () => {
         asset1.value.should.equal('My first reply');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
-        //event.oldValue.should.equal('10');
-        //event.newValue.should.equal('50');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Alice cannot submit a reply for Bob\'s message', async () => {
@@ -487,13 +487,13 @@ describe('#' + namespace, () => {
         asset1.value.should.equal('My first reply');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#2');
-        //event.oldValue.should.equal('20');
-        //event.newValue.should.equal('60');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Bob can submit a reply for a message without creator', async () => {
@@ -517,13 +517,13 @@ describe('#' + namespace, () => {
         asset1.value.should.equal('My first reply');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#2');
-        //event.oldValue.should.equal('20');
-        //event.newValue.should.equal('60');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Bob cannot submit a reply for Alice\'s message', async () => {

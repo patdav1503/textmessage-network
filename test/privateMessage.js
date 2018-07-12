@@ -414,22 +414,19 @@ describe('#' + namespace, () => {
         const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'directMessage');
         const asset1 = await assetRegistry.get('51');
 
-        //const assetRegistry2 = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'publicMessage');
-        //const asset2 = await assetRegistry.get('51');
-
         // Validate the asset.
         asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
         asset1.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
         asset1.value.should.equal('My first message');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
-        //event.oldValue.should.equal('10');
-        //event.newValue.should.equal('50');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Alice can submit a reply for her message', async () => {
@@ -450,22 +447,20 @@ describe('#' + namespace, () => {
         const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'directReply');
         const asset1 = await assetRegistry.get('51');
 
-        //const assetRegistry2 = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'publicMessage');
-        //const asset2 = await assetRegistry.get('51');
-
         // Validate the asset.
         asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
         asset1.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
         asset1.value.should.equal('My first reply');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
-        //event.oldValue.should.equal('10');
-        //event.newValue.should.equal('50');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Alice can submit a reply for her message without creator', async () => {
@@ -491,13 +486,14 @@ describe('#' + namespace, () => {
         asset1.value.should.equal('My first reply');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
-        //event.oldValue.should.equal('10');
-        //event.newValue.should.equal('50');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Alice cannot submit a reply for Bob\'s message', async () => {
@@ -547,22 +543,19 @@ describe('#' + namespace, () => {
         const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'directMessage');
         const asset1 = await assetRegistry.get('51');
 
-        //const assetRegistry2 = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'publicMessage');
-        //const asset2 = await assetRegistry.get('51');
-
         // Validate the asset.
         asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
         asset1.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
         asset1.value.should.equal('My first message');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
-        //event.oldValue.should.equal('10');
-        //event.newValue.should.equal('50');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Bob can submit a reply for his message', async () => {
@@ -589,13 +582,14 @@ describe('#' + namespace, () => {
         asset1.value.should.equal('My first reply');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
-        //event.oldValue.should.equal('10');
-        //event.newValue.should.equal('50');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Bob can submit a reply for his message without creator', async () => {
@@ -621,13 +615,14 @@ describe('#' + namespace, () => {
         asset1.value.should.equal('My first reply');
 
         // Validate the events.
-        //events.should.have.lengthOf(1);
-        //const event = events[0];
-        //event.eventId.should.be.a('string');
-        //event.timestamp.should.be.an.instanceOf(Date);
-        //event.asset.getFullyQualifiedIdentifier().should.equal(assetNS + '#1');
-        //event.oldValue.should.equal('10');
-        //event.newValue.should.equal('50');
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
+        event.subject.should.equal(myReply.subject);
     });
 
     it('Bob cannot submit a reply for her message with Alice as creator', async () => {

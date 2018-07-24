@@ -457,7 +457,7 @@ describe('#' + namespace, () => {
         const event = events[0];
         event.eventId.should.be.a('string');
         event.timestamp.should.be.an.instanceOf(Date);
-        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.replyTo.should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
         event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
         event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
         event.subject.should.equal(myReply.subject);
@@ -490,7 +490,7 @@ describe('#' + namespace, () => {
         const event = events[0];
         event.eventId.should.be.a('string');
         event.timestamp.should.be.an.instanceOf(Date);
-        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.replyTo.should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
         event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
         event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
         event.subject.should.equal(myReply.subject);
@@ -586,7 +586,7 @@ describe('#' + namespace, () => {
         const event = events[0];
         event.eventId.should.be.a('string');
         event.timestamp.should.be.an.instanceOf(Date);
-        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.replyTo.should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
         event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
         event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
         event.subject.should.equal(myReply.subject);
@@ -619,7 +619,7 @@ describe('#' + namespace, () => {
         const event = events[0];
         event.eventId.should.be.a('string');
         event.timestamp.should.be.an.instanceOf(Date);
-        event.replyTo.getFullyQualifiedIdentifier().should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
+        event.replyTo.should.equal(myReply.parentMessage.getFullyQualifiedIdentifier());
         event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
         event.recipient.getFullyQualifiedIdentifier().should.equal(participantNS + '#george@email.com');
         event.subject.should.equal(myReply.subject);

@@ -8,12 +8,18 @@ query selectAllPublicMessages {
         SELECT org.message.mynetwork.Message
 }
 
+/*
+ * Private messages returned will be only those with read permission(don't need to check for owner)
+ */
 query selectAllPrivateMessages {
     description: "Select all private messages"
     statement:
         SELECT org.message.mynetwork.directMessage
 }
 
+/*
+ * private messages returned will be only those with read permission(will be none if no read permission)
+ */
 query selectAllPrivateMessagesForRecipient {
     description: "Select all private messages based on their recipient"
     statement:
@@ -25,6 +31,16 @@ query selectAllPublicReplies {
     description: "Select all public replies"
     statement:
         SELECT org.message.mynetwork.Reply
+}
+
+/*
+ * replies returned will be all for given parent(read permission for all public replies)
+ */
+query selectAllPublicRepliesForParent {
+    description: "Select all public replies"
+    statement:
+        SELECT org.message.mynetwork.Reply
+            WHERE (replyTo == _$replyTo)
 }
 
 query selectAllPrivateReplies {

@@ -192,6 +192,56 @@ Feature: Text Message Network (Private message)
             """
         Then I should get an error matching /add object with ID .* as the object already exists/
 
+    Scenario: Alice can update a message subject
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateSubject", "oldMessage":"org.message.mynetwork.directMessage#001", "newSubject":"Goodbye All!"}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.directMessage", "messageId":"001", "creator":"org.message.mynetwork.Member#alice@email.com", "recipient":"org.message.mynetwork.Member#bob@email.com", "subject":"Goodbye All!", "value":"This is a test"}
+            ]
+            """
+
+    Scenario: Alice can update a message value
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateValue", "oldMessage":"org.message.mynetwork.directMessage#001", "newValue":"This is not a test"}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.directMessage", "messageId":"001", "creator":"org.message.mynetwork.Member#alice@email.com", "recipient":"org.message.mynetwork.Member#bob@email.com", "subject":"Hello There!", "value":"This is not a test"}
+            ]
+            """
+
+    Scenario: Alice can not update Bob's message subject(can't see message)
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateSubject", "oldMessage":"org.message.mynetwork.directMessage#002", "newSubject":"Goodbye All2!"}
+            ]
+            """
+        Then I should get an error matching /collection with ID .* does not exist/
+
+    Scenario: Alice can not update Bob's message value(can't see message)
+        When I use the identity alice1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateValue", "oldMessage":"org.message.mynetwork.directMessage#002", "newValue":"This is not a test"}
+            ]
+            """
+        Then I should get an error matching /collection with ID .* does not exist/
+
     Scenario: Bob can submit a message
         When I use the identity bob1
         And I submit the following transaction
@@ -213,6 +263,46 @@ Feature: Text Message Network (Private message)
             """
             [
             {"$class":"org.message.mynetwork.sendPrivateMessage", "creator":"org.message.mynetwork.Member#alice@email.com", "recipient":"org.message.mynetwork.Member#george@email.com", "messageId":"003", "subject":"Goodbye All!", "value":"Not this time."}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
+    Scenario: Bob can not update Alice's message subject
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateSubject", "oldMessage":"org.message.mynetwork.directMessage#001", "newSubject":"Goodbye All2!"}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
+    Scenario: Bob can not update Alice's message value
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateValue", "oldMessage":"org.message.mynetwork.directMessage#001", "newValue":"This is not a test"}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
+    Scenario: George can not update Bob's message subject
+        When I use the identity george1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateSubject", "oldMessage":"org.message.mynetwork.directMessage#002", "newSubject":"Goodbye All2!"}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
+    Scenario: George can not update Bob's message value
+        When I use the identity george1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateValue", "oldMessage":"org.message.mynetwork.directMessage#002", "newValue":"This is not a test"}
             ]
             """
         Then I should get an error matching /does not have .* access to resource/

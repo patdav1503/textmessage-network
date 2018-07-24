@@ -67,7 +67,7 @@ rule MessageRecipient {
 }
 
 rule EverybodyCanSubmitMessages {
-    description: "Allow all participants to submit transactions"
+    description: "Allow all participants to submit send transactions"
     participant: "org.message.mynetwork.User"
     operation: CREATE
     resource: "org.message.mynetwork.sendPublicMessage"
@@ -75,7 +75,7 @@ rule EverybodyCanSubmitMessages {
 }
 
 rule EverybodyCanSubmitPrivateMessages {
-    description: "Allow all participants to submit transactions"
+    description: "Allow all participants to send transactions"
     participant: "org.message.mynetwork.User"
     operation: CREATE
     resource: "org.message.mynetwork.sendPrivateMessage"
@@ -83,7 +83,7 @@ rule EverybodyCanSubmitPrivateMessages {
 }
 
 rule EverybodyCanSubmitReplies {
-    description: "Allow all participants to submit transactions"
+    description: "Allow all participants to submit send transactions"
     participant: "org.message.mynetwork.User"
     operation: CREATE
     resource: "org.message.mynetwork.sendPublicReply"
@@ -91,10 +91,26 @@ rule EverybodyCanSubmitReplies {
 }
 
 rule EverybodyCanSubmitPrivateReplies {
-    description: "Allow all participants to submit transactions"
+    description: "Allow all participants to submit send transactions"
     participant: "org.message.mynetwork.User"
     operation: CREATE
     resource: "org.message.mynetwork.sendPrivateReply"
+    action: ALLOW
+}
+
+rule EverybodyCanUpdateSubjects {
+    description: "Allow all participants to submit update transactions"
+    participant: "org.message.mynetwork.User"
+    operation: CREATE
+    resource: "org.message.mynetwork.updateSubject"
+    action: ALLOW
+}
+
+rule EverybodyCanUpdateValues {
+    description: "Allow all participants to submit update transactions"
+    participant: "org.message.mynetwork.User"
+    operation: CREATE
+    resource: "org.message.mynetwork.updateValue"
     action: ALLOW
 }
 

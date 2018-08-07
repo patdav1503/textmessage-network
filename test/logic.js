@@ -388,6 +388,63 @@ describe('#' + namespace, () => {
         assetRegistry.remove('1').should.be.rejectedWith(/does not have .* access to resource/);
     });
 
+    it('Alice can send a message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
+
+        // Submit the reply.
+        const myMessage = factory.newTransaction(namespace, 'sendPublicMessage');
+        myMessage.creator = factory.newRelationship(namespace, participantType, 'alice@email.com');
+        myMessage.messageId = '51';
+        myMessage.value = 'My first message';
+        myMessage.subject = 'First message';
+        await businessNetworkConnection.submitTransaction(myMessage);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'Message');
+        const asset1 = await assetRegistry.get('51');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        asset1.value.should.equal('My first message');
+
+        // Validate the events.
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        event.subject.should.equal(myMessage.subject);
+    });
+
+    it('Alice can send a message without creator', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
+
+        // Submit the reply.
+        const myMessage = factory.newTransaction(namespace, 'sendPublicMessage');
+        myMessage.messageId = '51';
+        myMessage.value = 'My first message';
+        myMessage.subject = 'First message';
+        await businessNetworkConnection.submitTransaction(myMessage);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'Message');
+        const asset1 = await assetRegistry.get('51');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        asset1.value.should.equal('My first message');
+
+        // Validate the events.
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        event.subject.should.equal(myMessage.subject);
+    });
+
     it('Alice can submit a reply for a message', async () => {
         // Use the identity for Alice.
         await useIdentity(aliceCardName);
@@ -463,6 +520,63 @@ describe('#' + namespace, () => {
         myReply.subject = 'Re: First reply';
         await businessNetworkConnection.submitTransaction(myReply).should.be.rejectedWith(/does not have .* access to resource/);
 
+    });
+
+    it('Bob can send a message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myMessage = factory.newTransaction(namespace, 'sendPublicMessage');
+        myMessage.creator = factory.newRelationship(namespace, participantType, 'bob@email.com');
+        myMessage.messageId = '51';
+        myMessage.value = 'My first message';
+        myMessage.subject = 'First message';
+        await businessNetworkConnection.submitTransaction(myMessage);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'Message');
+        const asset1 = await assetRegistry.get('51');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        asset1.value.should.equal('My first message');
+
+        // Validate the events.
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        event.subject.should.equal(myMessage.subject);
+    });
+
+    it('Bob can send a message without creator', async () => {
+        // Use the identity for Alice.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myMessage = factory.newTransaction(namespace, 'sendPublicMessage');
+        myMessage.messageId = '51';
+        myMessage.value = 'My first message';
+        myMessage.subject = 'First message';
+        await businessNetworkConnection.submitTransaction(myMessage);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'Message');
+        const asset1 = await assetRegistry.get('51');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        asset1.value.should.equal('My first message');
+
+        // Validate the events.
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        event.subject.should.equal(myMessage.subject);
     });
 
     it('Bob can submit a reply for a message', async () => {

@@ -277,6 +277,56 @@ Feature: Text Message Network
             ]
             """
 
+    Scenario: Bob can update a message subject
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateSubject", "oldMessage":"org.message.mynetwork.Message#002", "newSubject":"Goodbye All2!"}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.Message", "messageId":"002", "creator":"org.message.mynetwork.Member#bob@email.com", "subject":"Goodbye All2!", "value":"Go Away"}
+            ]
+            """
+
+    Scenario: Bob can update a message value
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateValue", "oldMessage":"org.message.mynetwork.Message#002", "newValue":"This is not a test"}
+            ]
+            """
+        Then I should have the following assets
+            """
+            [
+            {"$class":"org.message.mynetwork.Message", "messageId":"002", "creator":"org.message.mynetwork.Member#bob@email.com", "subject":"Goodbye All!", "value":"This is not a test"}
+            ]
+            """
+
+    Scenario: Bob can not update Alice's message subject
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateSubject", "oldMessage":"org.message.mynetwork.Message#001", "newSubject":"Goodbye All2!"}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
+    Scenario: Bob can not update Alice's message value
+        When I use the identity bob1
+        And I submit the following transaction
+            """
+            [
+            {"$class":"org.message.mynetwork.updateValue", "oldMessage":"org.message.mynetwork.Message#001", "newValue":"This is not a test"}
+            ]
+            """
+        Then I should get an error matching /does not have .* access to resource/
+
     Scenario: Bob can send a message without creator
         When I use the identity bob1
         And I submit the following transaction

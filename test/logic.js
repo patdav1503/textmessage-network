@@ -654,4 +654,164 @@ describe('#' + namespace, () => {
         await businessNetworkConnection.submitTransaction(myReply).should.be.rejectedWith(/does not have .* access to resource/);
     });
 
+    it('Alice can update the subject of her message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
+
+        // Submit the reply.
+        const myTrans = factory.newTransaction(namespace, 'updateSubject');
+        myTrans.oldMessage = factory.newRelationship(namespace,'Message','1');
+        myTrans.newSubject = 'Hello Everybody!';
+        await businessNetworkConnection.submitTransaction(myTrans);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'Message');
+        const asset1 = await assetRegistry.get('1');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        asset1.subject.should.equal('Hello Everybody!');
+
+        // Validate the events.
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.oldMessage.should.equal(myTrans.oldMessage.getFullyQualifiedIdentifier());
+        event.oldSubject.should.equal('Hello There!');
+        event.newSubject.should.equal('Hello Everybody!');
+    });
+
+    it('Alice can not update the subject of Bob\'s message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
+
+        // Submit the reply.
+        const myTrans = factory.newTransaction(namespace, 'updateSubject');
+        myTrans.oldMessage = factory.newRelationship(namespace,'Message','2');
+        myTrans.newSubject = 'Hello Everybody!';
+        await businessNetworkConnection.submitTransaction(myTrans).should.be.rejectedWith(/does not have .* access to resource/);
+
+    });
+
+    it('Bob can update the subject of his message', async () => {
+        // Use the identity for Bob.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myTrans = factory.newTransaction(namespace, 'updateSubject');
+        myTrans.oldMessage = factory.newRelationship(namespace,'Message','2');
+        myTrans.newSubject = 'Hello Everybody!';
+        await businessNetworkConnection.submitTransaction(myTrans);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'Message');
+        const asset1 = await assetRegistry.get('2');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        asset1.subject.should.equal('Hello Everybody!');
+
+        // Validate the events.
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.oldMessage.should.equal(myTrans.oldMessage.getFullyQualifiedIdentifier());
+        event.oldSubject.should.equal('Goodbye All!');
+        event.newSubject.should.equal('Hello Everybody!');
+    });
+
+    it('Bob can not update the subject of Alice\'s message', async () => {
+        // Use the identity for Bob.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myTrans = factory.newTransaction(namespace, 'updateSubject');
+        myTrans.oldMessage = factory.newRelationship(namespace,'Message','1');
+        myTrans.newSubject = 'Hello Everybody!';
+        await businessNetworkConnection.submitTransaction(myTrans).should.be.rejectedWith(/does not have .* access to resource/);
+
+    });
+
+    it('Alice can update the value of her message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
+
+        // Submit the reply.
+        const myTrans = factory.newTransaction(namespace, 'updateValue');
+        myTrans.oldMessage = factory.newRelationship(namespace,'Message','1');
+        myTrans.newValue = 'This is not a test';
+        await businessNetworkConnection.submitTransaction(myTrans);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'Message');
+        const asset1 = await assetRegistry.get('1');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#alice@email.com');
+        asset1.value.should.equal('This is not a test');
+
+        // Validate the events.
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.oldMessage.should.equal(myTrans.oldMessage.getFullyQualifiedIdentifier());
+        event.oldValue.should.equal('This is a test');
+        event.newValue.should.equal('This is not a test');
+    });
+
+    it('Alice can not update the subject of Bob\'s message', async () => {
+        // Use the identity for Alice.
+        await useIdentity(aliceCardName);
+
+        // Submit the reply.
+        const myTrans = factory.newTransaction(namespace, 'updateValue');
+        myTrans.oldMessage = factory.newRelationship(namespace,'Message','2');
+        myTrans.newValue = 'This is not a test';
+        await businessNetworkConnection.submitTransaction(myTrans).should.be.rejectedWith(/does not have .* access to resource/);
+
+    });
+
+    it('Bob can update the subject of his message', async () => {
+        // Use the identity for Bob.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myTrans = factory.newTransaction(namespace, 'updateValue');
+        myTrans.oldMessage = factory.newRelationship(namespace,'Message','2');
+        myTrans.newValue = 'This is not a test';
+        await businessNetworkConnection.submitTransaction(myTrans);
+
+        // Get the asset.
+        const assetRegistry = await businessNetworkConnection.getAssetRegistry(namespace + '.' + 'Message');
+        const asset1 = await assetRegistry.get('2');
+
+        // Validate the asset.
+        asset1.creator.getFullyQualifiedIdentifier().should.equal(participantNS + '#bob@email.com');
+        asset1.value.should.equal('This is not a test');
+
+        // Validate the events.
+        events.should.have.lengthOf(1);
+        const event = events[0];
+        event.eventId.should.be.a('string');
+        event.timestamp.should.be.an.instanceOf(Date);
+        event.oldMessage.should.equal(myTrans.oldMessage.getFullyQualifiedIdentifier());
+        event.oldValue.should.equal('Another test message from bob');
+        event.newValue.should.equal('This is not a test');
+    });
+
+    it('Bob can not update the value of Alice\'s message', async () => {
+        // Use the identity for Bob.
+        await useIdentity(bobCardName);
+
+        // Submit the reply.
+        const myTrans = factory.newTransaction(namespace, 'updateValue');
+        myTrans.oldMessage = factory.newRelationship(namespace,'Message','1');
+        myTrans.newValue = 'This is not a test';
+        await businessNetworkConnection.submitTransaction(myTrans).should.be.rejectedWith(/does not have .* access to resource/);
+
+    });
+
 });
